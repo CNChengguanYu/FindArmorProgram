@@ -20,6 +20,7 @@ public:
     float getWidth();
     float getAngle();
     Point2f getCenter();
+    COLOR getColor();
     LightBar(COLOR color,RotatedRect Rect);
     LightBar();
     ~LightBar();

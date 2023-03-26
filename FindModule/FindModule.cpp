@@ -14,7 +14,7 @@ bool FindModule::find(Mat &src) {
 
     //imshow("321",bin_Frame);
 
-    threshold(bin_Frame,dst_bin_Frame,200,255,THRESH_BINARY);
+    threshold(bin_Frame,dst_bin_Frame,230,255,THRESH_BINARY);
 
     //开闭
     dilate(dst_bin_Frame,dst_bin_Frame, getStructuringElement(MORPH_RECT,Size(11,11)));
@@ -38,10 +38,10 @@ bool FindModule::find(Mat &src) {
 
     //cout<<"装甲版"<<found_Armor.size()<<"个"<<endl;
 
-
     showTargetNumber();
 
     imshow("test",final_Frame);
+    std::cout<<"帧结束"<<std::endl;
     return true;
 }
 
@@ -60,7 +60,7 @@ bool FindModule::contoursTOLightBar() {
        //从椭圆构造矩形,在方向上比从边缘构建更准确
        get_Rect = fitEllipse(index_contours);
        //如果面积小于100，则剔除（减少多余运算）
-       if(get_Rect.size.area()<50)continue;
+       if(get_Rect.size.area()<100)continue;
        //构造灯条
        found_LightBar.push_back(LightBar(GetRectColor(get_Rect),get_Rect));
     }
@@ -78,11 +78,14 @@ void FindModule::Drawrects() {
     Point2f rect_Points[4]={};
     Point2f l_Light_Points[4]={};
     Point2f r_Light_Points[4]={};
-    //绘制灯条
 
+    Scalar color;
     //绘制矩形
     for(Armor index_Armor:found_Armor)
     {
+        if(index_Armor.getColor()==RED)color=Scalar(50,50,255);
+            else color=Scalar(255,50,50);
+
         index_Armor.GetCenterRectPoints(rect_Points);
         index_Armor.getLeftLightBar().getRect().points(l_Light_Points);
         index_Armor.getRightLightBar().getRect().points(r_Light_Points);
@@ -91,14 +94,14 @@ void FindModule::Drawrects() {
         for(int draw_num=0;draw_num<4;++draw_num)
         {
             //绘制边
-            line(final_Frame,rect_Points[draw_num],rect_Points[(draw_num+1)%4],Scalar(255,255,255),2);
+            line(final_Frame,rect_Points[draw_num],rect_Points[(draw_num+1)%4],color,4);
             //绘制顶点
             circle(final_Frame,rect_Points[draw_num], 4,Scalar (123,123,255),-1);
 
             //绘制左边灯条
-            line(final_Frame,l_Light_Points[draw_num],l_Light_Points[(draw_num+1)%4],Scalar(rand()%255,rand()%255,rand()%255),3);
+            line(final_Frame,l_Light_Points[draw_num],l_Light_Points[(draw_num+1)%4],color,4);
             //右边
-            line(final_Frame,r_Light_Points[draw_num],r_Light_Points[(draw_num+1)%4],Scalar(rand()%255,rand()%255,rand()%255),3);
+            line(final_Frame,r_Light_Points[draw_num],r_Light_Points[(draw_num+1)%4],color,4);
 
         }
     }
@@ -187,11 +190,13 @@ bool FindModule::judgeLightBarHeightDiff(LightBar &left_Bar, LightBar &right_Bar
     float Borderline = abs(left_Bar.getCenter().x-right_Bar.getCenter().x);
     float hypotenuse = getLBtoRBlength(left_Bar,right_Bar);
     float ang = Borderline/hypotenuse;
-    if(ang>0.5)
+    if(ang>0.7)
     {
+        std::cout<<"angle=true==>"<<ang<<"B/R"<<Borderline<<"/"<<hypotenuse<<std::endl;
         return true;
     }else
     {
+        std::cout<<"angle====>"<<ang<<std::endl;
         return false;
     }
 }

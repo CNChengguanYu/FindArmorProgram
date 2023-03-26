@@ -14,9 +14,9 @@ int main(int args ,char* argv[])
         if(!Finder.find(Frame))
             std::cout<<"空图"<<std::endl;
 
-        char comd = waitKey(0);
-        if(comd == 's' or comd == 'S')continue;
-        //waitKey(10);
+        //char comd = waitKey(0);
+        //if(comd == 's' or comd == 'S')continue;
+        waitKey(10);
     }
     return 0;
 }

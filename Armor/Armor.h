@@ -8,6 +8,7 @@ class Armor {
     Point2f points[4];
     Point2f box_Center;
     ID box_ID = UNKNOWN;
+    COLOR color;
     float LB_to_RB_Lenght=0;
     float angle=0;
     void AVGangle();
@@ -19,6 +20,7 @@ public:
     Point2f getBoxCenter();
     float getLBtoRBLenght();
     void GetCenterRectPoints(Point2f *ptr);
+    COLOR getColor();
     LightBar getLeftLightBar();
     LightBar getRightLightBar();
 };

@@ -3,6 +3,7 @@
 Armor::Armor(LightBar &_l_bar,LightBar &_r_bar) {
     l_LightBar=_l_bar;
     r_LightBar=_r_bar;
+    color=_l_bar.getColor();
     //获取灯条平均角度
     AVGangle();
     //构造装甲版中心
@@ -96,4 +97,8 @@ LightBar Armor::getLeftLightBar() {
 
 LightBar Armor::getRightLightBar() {
     return r_LightBar;
+}
+
+COLOR Armor::getColor() {
+    return color;
 }

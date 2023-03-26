@@ -42,6 +42,10 @@ float LightBar::getAngle() {
     return angle;
 }
 
+COLOR LightBar::getColor() {
+    return light_Color;
+}
+
 
 
 
