@@ -26,8 +26,11 @@ class FindModule {
     void LightBarTOArmor(vector<LightBar> &input,vector<Armor> &output);
     void Drawrects();
     COLOR GetRectColor(RotatedRect &_Rect);
-    float getLbtoRbLenght(LightBar Left_, LightBar Right_);
-    bool Armorjudge(const LightBar &left_bar , const LightBar &right_bar );
+    bool Armorjudge(LightBar &left_bar , LightBar &right_bar );
+    float getLBtoRBlength(LightBar &left_Bar,LightBar &right_Bar);
+    bool judgeLightBarAngle(LightBar &left_Bar , LightBar &right_Bar);
+    bool judgeLightBarDistance(LightBar &left_Bar , LightBar &right_Bar);
+    bool judgeLightBarHeightDiff(LightBar &left_Bar , LightBar &right_Bar);
 public:
     bool find(Mat &src);
     void showTargetNumber();

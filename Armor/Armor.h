@@ -1,6 +1,3 @@
-//
-// Created by master on 23-3-11.
-//
 
 #ifndef FINDARMORPROGRAM_ARMOR_H
 #define FINDARMORPROGRAM_ARMOR_H
@@ -22,7 +19,8 @@ public:
     Point2f getBoxCenter();
     float getLBtoRBLenght();
     void GetCenterRectPoints(Point2f *ptr);
-
+    LightBar getLeftLightBar();
+    LightBar getRightLightBar();
 };
 
 

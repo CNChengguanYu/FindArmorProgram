@@ -89,3 +89,11 @@ Mat Armor::DisplayBox(const Mat& Frame) {
     resize(out_Display,out_Display,Size(28,28));
     return out_Display;
 }
+
+LightBar Armor::getLeftLightBar() {
+    return l_LightBar;
+}
+
+LightBar Armor::getRightLightBar() {
+    return r_LightBar;
+}
