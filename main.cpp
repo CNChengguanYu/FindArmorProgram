@@ -6,8 +6,10 @@ using namespace std;
 int main(int args ,char* argv[])
 {
     FindModule Finder(BLUE);
-    //VideoCapture VideoStream(0);
-    VideoCapture VideoStream("../armor_red.mp4");
+    VideoCapture VideoStream(0);
+
+    namedWindow("roi",WINDOW_NORMAL);
+    //VideoCapture VideoStream("../armor_red.mp4");
     Mat Frame;
     while(VideoStream.read(Frame))
     {

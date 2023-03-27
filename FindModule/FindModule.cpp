@@ -14,11 +14,11 @@ bool FindModule::find(Mat &src) {
 
     //imshow("321",bin_Frame);
 
-    threshold(bin_Frame,dst_bin_Frame,230,255,THRESH_BINARY);
+    threshold(bin_Frame,dst_bin_Frame,250,255,THRESH_BINARY);
 
     //开闭
     dilate(dst_bin_Frame,dst_bin_Frame, getStructuringElement(MORPH_RECT,Size(11,11)));
-    erode(dst_bin_Frame,dst_bin_Frame,getStructuringElement(MORPH_RECT, Size(7, 7)));
+    erode(dst_bin_Frame,dst_bin_Frame,getStructuringElement(MORPH_RECT, Size(5, 5)));
     //dilate(dst_bin_Frame,dst_bin_Frame, getStructuringElement(MORPH_RECT,Size(3,3)));
 
     imshow("dst_bin",dst_bin_Frame);
@@ -38,7 +38,7 @@ bool FindModule::find(Mat &src) {
 
     //cout<<"装甲版"<<found_Armor.size()<<"个"<<endl;
 
-    showTargetNumber();
+    //showTargetNumber();
 
     imshow("test",final_Frame);
     std::cout<<"帧结束"<<std::endl;
@@ -60,7 +60,7 @@ bool FindModule::contoursTOLightBar() {
        //从椭圆构造矩形,在方向上比从边缘构建更准确
        get_Rect = fitEllipse(index_contours);
        //如果面积小于100，则剔除（减少多余运算）
-       if(get_Rect.size.area()<100)continue;
+       if(get_Rect.size.area()<MIN_LIGHTBAR_AREA || get_Rect.size.area()>MAX_LIGHTBAR_AREA)continue;
        //构造灯条
        found_LightBar.push_back(LightBar(GetRectColor(get_Rect),get_Rect));
     }
@@ -83,8 +83,9 @@ void FindModule::Drawrects() {
     //绘制矩形
     for(Armor index_Armor:found_Armor)
     {
-        if(index_Armor.getColor()==RED)color=Scalar(50,50,255);
-            else color=Scalar(255,50,50);
+        if(index_Armor.getColor()==RED){color=Scalar(50,50,255);}
+            else if(index_Armor.getColor()==BLUE){color=Scalar(255,50,50);}
+            else{color=Scalar(255,255,255);}
 
         index_Armor.GetCenterRectPoints(rect_Points);
         index_Armor.getLeftLightBar().getRect().points(l_Light_Points);
@@ -117,7 +118,6 @@ void FindModule::LightBarTOArmor(vector<LightBar> &input,vector<Armor> &output)
     for(int jugde = index-1;jugde>=0;--jugde)
     {
         LightBar test1= input[jugde];
-        //std::cout<<"index:"<<index<<",jugde:"<<jugde<<std::endl;
         if(Armorjudge(test,test1))
         {
             //成功
@@ -128,13 +128,41 @@ void FindModule::LightBarTOArmor(vector<LightBar> &input,vector<Armor> &output)
     }
     //匹配完成后无论是否成功都应该退出末位，否则下一次递归将会重复判断该灯条
     input.erase(input.end());
-
+    //递归调用
     LightBarTOArmor(input,output);
 }
 
 COLOR FindModule::GetRectColor(RotatedRect &_Rect) {
-    //测试用，未实现
-    return RED;
+    Mat ROI;
+    int red_color=0;
+    int blue_color=0;
+    Rect ROI_Rect(_Rect.boundingRect());
+    ROI_Rect.width+=fmax(10,_Rect.size.width*0.3);
+    ROI_Rect.height+=fmax(20,_Rect.size.height*0.3);
+
+    if(src_Frame.cols<=ROI_Rect.x+ROI_Rect.width)ROI_Rect.width=src_Frame.cols-ROI_Rect.x-2;
+
+    if(src_Frame.rows<=ROI_Rect.y+ROI_Rect.height)ROI_Rect.height=src_Frame.rows-ROI_Rect.y-2;
+
+
+    if(ROI_Rect.x<0)ROI_Rect.x=0;
+    if(ROI_Rect.y<0)ROI_Rect.y=0;
+
+
+    if(ROI_Rect.empty() || ROI_Rect.area()< MIN_LIGHTBAR_AREA){return NORMAL;}
+
+    src_Frame(ROI_Rect).copyTo(ROI);
+
+    Mat_<Vec3b>::iterator it = ROI.begin<Vec3b>();
+    Mat_<Vec3b>::iterator itend = ROI.end<Vec3b>();
+
+    for(;it!=itend;++it)
+    {
+       blue_color+=(*it)[0];
+       red_color += (*it)[2];
+    }
+    imshow("roi",ROI);
+    if(blue_color>red_color*1.1){return BLUE;}else if(red_color*1.1>blue_color){return RED;}else{return NORMAL;}
 }
 
 //这个函数传入两个灯条，判断他是否符合构造一个装甲版，如果可以，则返回真
@@ -143,6 +171,7 @@ bool FindModule::Armorjudge(LightBar &left_bar ,LightBar &right_bar ) {
     if(!judgeLightBarAngle(left_bar,right_bar)){std::cout<<"匹配失败！[角度]"<<std::endl;return false;}
     if(!judgeLightBarDistance(left_bar,right_bar)){std::cout<<"匹配失败！[距离]"<<std::endl;return false;}
     if(!judgeLightBarHeightDiff(left_bar,right_bar)){std::cout<<"匹配失败！[角度-高度差]"<<std::endl;return false;}
+    if((left_bar.getColor()!=right_bar.getColor())){std::cout<<"匹配失败！[颜色]"<<std::endl;return false;}
     return true;
 }
 
