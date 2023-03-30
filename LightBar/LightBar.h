@@ -5,9 +5,9 @@
 #include "../settings.h"
 using namespace cv;
 class LightBar {
-    COLOR light_Color;
-    RotatedRect ReRect;
-    Point2f center;
+    COLOR light_Color; //灯条颜色
+    RotatedRect BarRect; //灯条矩形
+    Point2f center;  //灯条中心
 
     float angle=0;
     float area=0;

@@ -5,14 +5,16 @@
 using namespace std;
 int main(int args ,char* argv[])
 {
-    FindModule Finder(BLUE);
-    VideoCapture VideoStream(0);
-
-    namedWindow("roi",WINDOW_NORMAL);
-    //VideoCapture VideoStream("../armor_red.mp4");
+    //初始化查找器对象（输入参数暂时没用）
+    FindModule Finder(NORMAL);
+    //VideoCapture VideoStream(0);
+    VideoCapture VideoStream("../armor_red.mp4");
+    //初始化帧
     Mat Frame;
+    //循环读入帧
     while(VideoStream.read(Frame))
     {
+        //开启查找
         if(!Finder.find(Frame))
             std::cout<<"空图"<<std::endl;
 

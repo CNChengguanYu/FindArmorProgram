@@ -2,7 +2,7 @@
 
 LightBar::LightBar(COLOR color,RotatedRect Rect) {
     light_Color = color;
-    ReRect=Rect;
+    BarRect=Rect;
     center = Rect.center;
     height = Rect.size.height;
     width = Rect.size.width;
@@ -23,7 +23,7 @@ LightBar::LightBar() {
 }
 
 RotatedRect LightBar::getRect() {
-    return ReRect;
+    return BarRect;
 }
 
 float LightBar::getHeight() {
@@ -35,7 +35,7 @@ float LightBar::getWidth() {
 }
 
 Point2f LightBar::getCenter() {
-    return ReRect.center;
+    return BarRect.center;
 }
 
 float LightBar::getAngle() {
